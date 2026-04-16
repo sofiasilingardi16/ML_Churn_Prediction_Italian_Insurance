@@ -1,55 +1,227 @@
-# ML Churn Prediction in Italian Insurance
+# Predicting Customer Churn in Italian Motor Insurance
+
+An end-to-end machine learning project focused on predicting customer churn for an Italian motor insurance company, with the goal of enabling targeted retention campaigns and improving customer retention.
 
 ## Project Overview
-This project aims to develop a machine learning model to predict customer churn in the Italian motor insurance industry. By utilizing customer data, we can identify factors that lead to customer retention or loss, allowing for better marketing strategies and customer engagement.
 
-## Table of Contents
-1. [Introduction](#introduction)
-2. [Dataset](#dataset)
-3. [Methodology](#methodology)
-4. [Results](#results)
-5. [Usage](#usage)
-6. [Conclusion](#conclusion)
+Customer churn is a major business issue in the insurance industry, especially in highly competitive markets where policyholders can easily switch providers. In this project, we developed a predictive model to identify customers who are most likely to not renew their motor insurance policy, so the company can intervene before renewal with personalized retention actions.
 
-## Introduction
-Customer churn refers to the phenomenon of customers ceasing to use a company's services or products. In the insurance sector, predicting which customers are likely to churn can significantly impact profitability and customer satisfaction.
+The project combines:
 
-## Dataset
-- **Source**: The dataset is sourced from [source link or description].
-- **Features**: The dataset contains various features such as:
-  - Customer ID  
-  - Age  
-  - Gender  
-  - Policy details  
-  - Claims history  
-  - Tenure
+- Business understanding
+- Data cleaning and preparation
+- Churn target definition
+- Exploratory data analysis
+- Feature engineering
+- Predictive modeling
+- Business interpretation of model outputs
 
-## Methodology
-1. **Data Preprocessing**: Cleaning and transforming the data to ensure quality input for the model.
-2. **Feature Engineering**: Selecting and constructing features that can improve model performance.
-3. **Model Selection**: Testing multiple algorithms to find the best fit (e.g., Logistic Regression, Decision Trees, Random Forest).
-4. **Model Training and Evaluation**: Splitting data into training and test sets, training the model, and evaluating performance using metrics like accuracy, precision, recall, and F1 score.
+## Business Problem
+
+The company's strategic goal is to reduce customer abandonment by identifying clients who are unlikely to renew their motor insurance contracts before they leave. The churn rate observed in the dataset is approximately **21.5%**, meaning about 1 in 5 customers does not renew their policy.
+
+## Project Objective
+
+Develop a predictive model that estimates the probability of churn within one year, so the business can:
+
+- Prioritize high-risk customers
+- Optimize retention campaigns
+- Allocate CRM resources more efficiently
+- Maximize customer lifetime value
+
+## Dataset Description
+
+The project integrates multiple sources of insurance-related data at the customer level:
+
+### Client Data
+
+Includes demographic and behavioral information such as:
+
+- Age
+- Seniority
+- Number of accidents
+- App usage
+- Risk rating
+- Province of residence
+
+### Contract Data
+
+Includes:
+
+- Premium amounts
+- Discounts
+- Payment method
+- Number of installments
+- Product and risk type
+- Warranty indicators / optional coverages
+
+### Contract Dates
+
+Includes:
+
+- Contract effective date
+- Contract closing date
+- Contract expiration date
+
+### Vehicle Data
+
+Includes:
+
+- Commercial value
+- Vehicle type
+- Power
+- Yearly mileage
+- ABS presence
+- Airbag presence
+- Anti-theft presence
+
+## Unit of Analysis and Timeframe
+
+The unit of analysis is **customer-year**. The project tracks the full customer base active in 2015 and follows complete contract history through 2020. The final modeling dataset is built with one row per customer per year.
+
+## Churn Definition
+
+A customer is classified as churned when their policy expires and they do not renew within 366 days of expiration. This definition was designed to reflect the real business meaning of churn. The project also distinguishes between:
+
+- Early termination without renewal
+- Early termination followed by renewal
+- Normal expiration followed by renewal or non-renewal
+
+## Data Preparation
+
+Main preprocessing steps included:
+
+- Converting date columns into proper datetime format
+- Removing columns with too many missing values
+- Converting Yes/No fields into binary variables
+- Aggregating contract-level data into one row per customer per year
+- Restricting the data to contracts expiring between 2015 and mid-2020
+- Handling multicollinearity and removing leakage-prone features
+
+## Exploratory Data Analysis
+
+The exploratory analysis revealed several relevant churn patterns:
+
+- Churn remained relatively stable over time, around 21%
+- New customers and mid-tenure customers were more likely to churn
+- Customers with no optional coverages had significantly higher churn rates
+- Customers with a previous churn event were more likely to churn again
+- Low-premium customers churned regardless of discount, suggesting that discount alone is not always an effective retention tool
+
+These findings helped guide both feature engineering and business recommendations.
+
+## Feature Engineering
+
+The final dataset contains approximately:
+
+- **908,000 observations**
+- **43 variables**
+
+Feature selection focused on keeping the most informative predictors while reducing redundancy and leakage. Among the strongest signals retained:
+
+- Seniority
+- Discount
+- Previous churn
+- Selected coverages
+
+Expiry-year-related information was removed because it was too strongly correlated with the target and could create data leakage.
+
+## Modeling Approach
+
+We compared several models:
+
+- Logistic Regression as a baseline
+- XGBoost
+- LightGBM
+
+To ensure realistic evaluation, we used an **out-of-time split**:
+
+- Training on past observations
+- Testing on future observations
+
+### Evaluation Metrics
+
+The models were assessed using:
+
+- Accuracy
+- ROC-AUC
+- Recall
+- Precision
+
+Particular attention was given to recall, because in a churn setting it is more costly to miss a customer who is about to leave than to contact some customers who would have stayed anyway.
 
 ## Results
-- **Best Performing Model**: The model with the highest accuracy was the Random Forest classifier.
-- **Key Insights**: Analysis on which features had the most influence on churn prediction.
 
-## Usage
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/sofiasilingardi16/ML_Churn_Prediction_Italian_Insurance.git
-   ```
-2. Install required libraries:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the model:
-   ```bash
-   python churn_prediction.py
-   ```
+The advanced models clearly outperformed the Logistic Regression baseline. In the expanded model comparison:
 
-## Conclusion
-The project highlights the importance of data-driven approaches in insurance and how machine learning can be leveraged to improve customer retention efforts. Future work will include exploring advanced models and real-time prediction capabilities. 
+| Model                  | Accuracy | ROC-AUC | Recall  | Precision |
+|-----------------------|----------|---------|---------|-----------|
+| Logistic Regression    | 62.01%   | 74.40%  | 76.60%  | 33.33%    |
+| XGBoost               | 71.90%   | 92.80%  | 88.50%  | 43.10%    |
+| LightGBM             | 71.50%   | 93.40%  | 88.40%  | 42.60%    |
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+These results show that the best models are highly effective at:
+
+- Ranking customers by churn risk
+- Identifying a large share of actual churners
+- Supporting retention prioritization
+
+### Business Interpretation
+
+In business terms:
+
+- The model catches about **88 out of 100 customers** who would have churned
+- Around **43 out of 100 contacted customers** are truly at risk
+- Even when precision is moderate, the model is still valuable because preventing churn is typically worth the cost of contacting some false positives
+
+## Business Insights
+
+The project identified the main high-risk customer segments:
+
+- New clients in their first year
+- Mid-tenure clients with 4–7 years of seniority
+- Customers with no optional coverages
+- Customers with low premium and no discount
+- Customers with previous churn history
+
+## Recommended Retention Strategy
+
+Based on the model and EDA findings, the company should:
+
+- Contact high-priority clients 60–90 days before renewal
+- Reward loyalty for mid-tenure customers
+- Demonstrate value to new customers
+- Propose add-on coverages to low-coverage clients
+- Integrate churn scores into CRM workflows for targeted retention campaigns
+
+## Limitations and Next Steps
+
+### Main Limitations
+
+- Missing behavioral signals such as call center interactions and digital engagement
+- Limited predictive depth due to unavailable CRM and telematics data
+
+### Suggested Next Steps
+
+- Integrate model outputs into CRM systems
+- Monitor campaign outcomes and model performance over time
+- Retrain the model every 6–12 months
+- Enrich the dataset with call center, digital, and telematics signals
+
+## Tech Stack
+
+Example tools and libraries used in the project:
+
+- Python
+- pandas
+- numpy
+- scikit-learn
+- XGBoost
+- LightGBM
+- matplotlib / visualization tools
+- Jupyter Notebook
+
+---
+
+**Author:** Sofia Silingardi  
+**Repository:** [ML_Churn_Prediction_Italian_Insurance](https://github.com/sofiasilingardi16/ML_Churn_Prediction_Italian_Insurance)
