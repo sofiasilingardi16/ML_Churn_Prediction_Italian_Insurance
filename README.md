@@ -223,5 +223,9 @@ Example tools and libraries used in the project:
 
 ---
 
-**Author:** Sofia Silingardi  
+**Authors:** Sofia Silingardi Hanna Kassahun Yihunie
+Francesco Gambera
+Akosua Ayewa Ofori-Karikari
+Sukhdeep Singh Saini
+Maria Alejandra Zapata Gil
 **Repository:** [ML_Churn_Prediction_Italian_Insurance](https://github.com/sofiasilingardi16/ML_Churn_Prediction_Italian_Insurance)
